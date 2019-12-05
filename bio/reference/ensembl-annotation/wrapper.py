@@ -39,7 +39,7 @@ if fmt == "gtf":
 elif fmt == "gff3":
     suffix = "gff3.gz"
 
-with open(snakemake.output[0], "wb") as out
+with open(snakemake.output[0], "wb") as out:
     url = "RETR pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
             release=release,
             build=build,
