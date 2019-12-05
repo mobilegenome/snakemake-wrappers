@@ -40,12 +40,12 @@ elif fmt == "gff3":
     suffix = "gff3.gz"
 
 with open(snakemake.output[0], "wb") as out:
-    url = "RETR pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
+    url = "ftp://ftp.ensembl.org/pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
             release=release,
             build=build,
             species=species,
             fmt=fmt,
             species_cap=species.capitalize(),
             suffix=suffix)
-
+    print(url)
     out.write(run(["curl", url], capture_output=True).stdout)
