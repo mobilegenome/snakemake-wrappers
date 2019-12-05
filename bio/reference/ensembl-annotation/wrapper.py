@@ -39,32 +39,13 @@ if fmt == "gtf":
 elif fmt == "gff3":
     suffix = "gff3.gz"
 
-r = StringIO()
-
-with FTP("ftp.ensembl.org") as ftp, open(snakemake.output[0], "wb") as out:
-    ftp.login()
-    ftp.retrbinary(
-        "RETR pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
+with open(snakemake.output[0], "wb") as out
+    url = "RETR pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
             release=release,
             build=build,
             species=species,
             fmt=fmt,
             species_cap=species.capitalize(),
-            suffix=suffix,
-        ),
-        out.write,
-    )
-    ftp.retrlines(
-        "RETR pub/release-{release}/{fmt}/{species}/CHECKSUMS".format(
-            release=release,
-            build=build,
-            species=species,
-            fmt=fmt,
-            species_cap=species.capitalize(),
-            suffix=suffix,
-        ),
-        lambda s, w=r.write: w(s + '\n'),
-        # use StringIO instance for callback, add "\n" because ftplib.retrlines omits newlines
-    )
+            suffix=suffix)
 
-    checksum()
+    out.write(run(["curl", url], capture_output=True).stdout)
