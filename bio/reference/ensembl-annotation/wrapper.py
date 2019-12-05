@@ -52,6 +52,7 @@ with open(snakemake.output[0], "wb") as out:
     print(url)
     out.write(run(["curl", url], capture_output=True).stdout)
 
+    checksum()
 
 
 
