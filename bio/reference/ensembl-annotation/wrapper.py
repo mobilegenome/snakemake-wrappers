@@ -16,8 +16,7 @@ build = snakemake.params.build
 
 
 def checksum():
-    url = url.rsplit("/", 1) + "/CHECKSUMS"
-    lines = run(["curl", url], capture_output=True).stdout
+    lines = run(["curl", cksum_url], capture_output=True).stdout
     for line in lines:
         fields = line.strip().split()
         cksum = int(fields[0])
@@ -52,6 +51,7 @@ with open(snakemake.output[0], "wb") as out:
     print(url)
     out.write(run(["curl", url], capture_output=True).stdout)
 
+    cksum_url = "{baseurl}/CHECKSUMS".format(baseurl=url.rsplit("/", 1)[0])
     checksum()
 
 
