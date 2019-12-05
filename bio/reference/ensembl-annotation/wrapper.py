@@ -16,7 +16,8 @@ build = snakemake.params.build
 
 
 def checksum():
-    lines = r.getvalue().strip().split("\n")
+    url = url.rsplit("/", 1) + "/CHECKSUMS"
+    lines = run(["curl", url], capture_output=True).stdout
     for line in lines:
         fields = line.strip().split()
         cksum = int(fields[0])
@@ -39,6 +40,7 @@ if fmt == "gtf":
 elif fmt == "gff3":
     suffix = "gff3.gz"
 
+r = StringIO()
 with open(snakemake.output[0], "wb") as out:
     url = "ftp://ftp.ensembl.org/pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
             release=release,
@@ -49,3 +51,7 @@ with open(snakemake.output[0], "wb") as out:
             suffix=suffix)
     print(url)
     out.write(run(["curl", url], capture_output=True).stdout)
+
+
+
+
