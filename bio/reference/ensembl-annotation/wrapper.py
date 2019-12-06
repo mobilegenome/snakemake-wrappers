@@ -4,8 +4,7 @@ __email__ = "johannes.koester@uni-due.de"
 __license__ = "MIT"
 __contributor__= "Johannes Köster, Fritjof Lammers"
 
-from ftplib import FTP
-from io import StringIO
+from urllib import request
 from subprocess import run
 from os.path import basename
 
@@ -16,8 +15,7 @@ build = snakemake.params.build
 
 
 def checksum():
-    raw = run(["curl", cksum_url], capture_output=True).stdout.decode("utf-8").strip()
-    lines = raw.split("\n")
+    lines = r.read().decode("UTF-8").strip().split("\n")
     for line in lines:
         fields = line.strip().split()
         cksum = int(fields[0])
@@ -26,12 +24,11 @@ def checksum():
             cksum_local = int(run(["sum", snakemake.output[0]], capture_output=True).stdout.strip().split()[0])
             if cksum_local == cksum:
                 print("CHECKSUM OK: %s" % snakemake.output[0])
-                exit(0)
+                return True
             else:
                 print("CHECKSUM FAILED: %s" % snakemake.output[0])
                 exit(1)
         else:
-            # print("No matching file for CHECKSUM test found")
             continue
 
 suffix = ""
@@ -40,7 +37,7 @@ if fmt == "gtf":
 elif fmt == "gff3":
     suffix = "gff3.gz"
 
-r = StringIO()
+
 with open(snakemake.output[0], "wb") as out:
     url = "ftp://ftp.ensembl.org/pub/release-{release}/{fmt}/{species}/{species_cap}.{build}.{release}.{suffix}".format(
             release=release,
@@ -49,10 +46,23 @@ with open(snakemake.output[0], "wb") as out:
             fmt=fmt,
             species_cap=species.capitalize(),
             suffix=suffix)
+    try:
+        r = request.urlopen(url)
+    except:
+        print("Error: could not retrieve %s" % url)
+
+    out.write(r.read())
+    success = True
     print(url)
-    out.write(run(["curl", url], capture_output=True).stdout)
+
 
 cksum_url = "{baseurl}/CHECKSUMS".format(baseurl=url.rsplit("/", 1)[0])
+
+try:
+    r = request.urlopen(cksum_url)
+except:
+    print("Error: Could not retrieve CHECKSUMS %s" % cksum_url)
+
 checksum()
 
 
