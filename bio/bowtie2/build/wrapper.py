@@ -5,10 +5,11 @@ __license__ = "MIT"
 
 
 from snakemake.shell import shell
+from os.path import basename
 
 extra = snakemake.params.get("extra", "")
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
-indexbase = snakemake.output[0].replace(".1.bt2", "")
+indexbase = basename(snakemake.output[0]).replace(".1.bt2", "")
 shell(
     "bowtie2-build --threads {snakemake.threads} {snakemake.params.extra} "
     "{snakemake.input.reference} {indexbase}"
