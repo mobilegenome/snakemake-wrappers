@@ -16,7 +16,9 @@ fasta_in = snakemake.input[0]
 tab_out = snakemake.output[0]
 
 if not fasta_in:
-    sys.exit("Please supply FASTA file, and only FASTA file! Produce a headerless TSV with columns (entryId, totalLength, lenthOnlyATCG.")
+    sys.exit(
+        "Please supply FASTA file, and only FASTA file! Produce a headerless TSV with columns (entryId, totalLength, lenthOnlyATCG."
+    )
 if fasta_in:
     if not os.path.isfile(fasta_in):
         sys.exit("Supplied FASTA file cannot be found!")
@@ -31,7 +33,9 @@ for record in SeqIO.parse(in_fh, "fasta"):
     print("Processing entry '{}' ...".format(record.id), file=sys.stderr)
     counter = Counter(record.seq)
     allBases = sum(counter.values())
-    onlyATCG = sum(list(map(lambda c: counter[c], ["A", "a", "T", "t", "C", "c", "G", "g"])))
+    onlyATCG = sum(
+        list(map(lambda c: counter[c], ["A", "a", "T", "t", "C", "c", "G", "g"]))
+    )
     print("\t".join([record.id, str(allBases), str(onlyATCG)]), file=out_fh)
 
 in_fh.close()

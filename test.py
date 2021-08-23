@@ -4057,3 +4057,10 @@ def test_metaspades():
             "-F",
         ],
     )
+
+@skip_if_not_modified
+def test_reference_genome_contiginfo():
+    run(
+        "bio/reference/genome-contiginformation",
+        ["snakemake", "--cores", "1", "--use-conda", "genome.contig_information.tsv", "-F"],
+    )

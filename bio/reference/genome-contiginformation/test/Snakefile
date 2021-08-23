@@ -1,7 +1,9 @@
 rule contig_information:
     input:
-        "genome.fasta"
+        "genome.fasta",
     output:
-        "genome.contig_information.tsv"
+        "genome.contig_information.tsv",
+    log:
+        "logs/genome_contiginformation.log",
     wrapper:
-        "file://home/fritjof/code/snakemake-wrappers/bio/reference/genome-contiginformation"
+        "https://raw.githubusercontent.com/mobilegenome/snakemake-wrappers/genome_contiginfo/bio/reference/genome-contiginformation/"

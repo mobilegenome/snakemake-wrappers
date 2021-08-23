@@ -1,4 +1,10 @@
 name: genome-contiginfo
-description: Read in a FASTA file and return a TSV with one entry per FASTA entry and three columns (entryId, totalLength, lengthOnlyATCG). This is the information needed by the stats-file used in Roddy workflows.
+description: Read in a FASTA file and return a TSV with one entry per FASTA entry and three columns (entryId, totalLength, lengthOnlyATCG).
+url: -
 authors:
   - Philip R. Kensche, Fritjof Lammers
+input:
+  - A (genome) FASTA file.
+output:
+  - >
+    a tabular text file listing the the total sequence length and number of ACTG characters in each FASTA record.
