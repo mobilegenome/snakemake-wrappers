@@ -8,6 +8,7 @@ authors:
 input:
   - BAM file of data aligned to genome
 output:
-  - QC report in TXT format (genome_results.txt)
+  - QC report in TXT and HTML format (genome_results.txt / qualimapReport.html).
 notes: |
   * For more information, see http://qualimap.conesalab.org/doc_html/analysis.html#bam-qc.
+  * Optionally, PDF reports can be created *instead* of HTML.
