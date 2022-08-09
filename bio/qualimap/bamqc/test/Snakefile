@@ -4,6 +4,9 @@ rule qualimap:
         bam="mapped/a.bam",
     output:
         directory("qc/a"),
+    params:
+        html_report=True  # necessary for full MultiQC compatibility  https://multiqc.info/docs/#qualimap
+                          # for PDF reports set to False and add param extra="-outformat PDF"
     log:
         "logs/qualimap/bamqc/a.log",
     # optional specification of memory usage of the JVM that snakemake will respect with global

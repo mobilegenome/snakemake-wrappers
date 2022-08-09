@@ -23,6 +23,12 @@ if os.environ.get("DISPLAY"):
 
 extra = snakemake.params.get("extra", "")
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
+
+if snakemake.params.html_report:
+    html_report_argument = "-outformat HTML"
+else:
+    html_report_argument = ""
+
 shell(
     "{java_opts_str} qualimap bamqc {extra} "
     "-bam {snakemake.input.bam} "
