@@ -68,6 +68,8 @@ elif sort == "picard":
 else:
     raise ValueError("Unexpected value for params.sort ({})".format(sort))
 
+print(f"Using the following pipe command: {pipe_cmd}")
+
 with tempfile.TemporaryDirectory() as tmp:
     shell(
         "(bwa mem"
