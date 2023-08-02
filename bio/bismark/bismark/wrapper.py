@@ -97,6 +97,7 @@ expected_2_actual_paths = [
     ),
 ]
 log_append = snakemake.log_fmt_shell(stdout=True, stderr=True, append=True)
+print(expected_2_actual_paths)
 for exp_path, actual_path in expected_2_actual_paths:
     print(f"moving {actual_path} to {exp_path}")
     if exp_path and (exp_path != actual_path):
