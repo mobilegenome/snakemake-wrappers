@@ -71,35 +71,4 @@ cmdline_args.append("{log}")
 # run
 shell(" ".join(cmdline_args))
 
-# Move outputs into proper position.
-expected_2_actual_paths = [
-    (
-        snakemake.output.bam,
-        os.path.join(
-            outdir, "{}{}.bam".format(basename, "" if single_end_mode else "_pe")
-        ),
-    ),
-    (
-        snakemake.output.report,
-        os.path.join(
-            outdir,
-            "{}_{}_report.txt".format(basename, "SE" if single_end_mode else "PE"),
-        ),
-    ),
-    (
-        snakemake.output.get("nucleotide_stats", None),
-        os.path.join(
-            outdir,
-            "{}{}.nucleotide_stats.txt".format(
-                basename, "" if single_end_mode else "_pe"
-            ),
-        ),
-    ),
-]
-log_append = snakemake.log_fmt_shell(stdout=True, stderr=True, append=True)
-print(expected_2_actual_paths)
-for exp_path, actual_path in expected_2_actual_paths:
-    print(f"moving {actual_path} to {exp_path}")
-    if exp_path and (exp_path != actual_path):
-        shell("mkdir -v -p {exp_path} {log_append}")
-        shell("mv {actual_path:q} {exp_path:q} {log_append}")
+
