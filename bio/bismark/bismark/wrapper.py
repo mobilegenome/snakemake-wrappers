@@ -9,8 +9,6 @@ __license__ = "MIT"
 import os
 import shutil
 
-import pdb 
-
 from pathlib import Path
 from snakemake.shell import shell
 from tempfile import TemporaryDirectory
@@ -117,9 +115,7 @@ with TemporaryDirectory() as tempdir:
         #     ),
         # ),
     ]
-
-    pdb.set_trace()
-    
+   
     log_append = snakemake.log_fmt_shell(stdout=True, stderr=True, append=True)
     for exp_path, actual_path in expected_2_actual_paths:
         if exp_path and (exp_path != actual_path):
