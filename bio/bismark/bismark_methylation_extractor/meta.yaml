@@ -6,7 +6,6 @@ authors:
 input:
   - Input BAM file aligned by Bismark
 params:
-  - output_dir: Output directory (current dir is used if not specified)
   - ignore: Number of bases to trim at 5' end in R1 (see bismark_methylation_extractor documentation), optional argument
   - ignore_3prime: Number of bases to trim at 3' end in R1 (see bismark_methylation_extractor documentation), optional argument
   - ignore_r2: Number of bases to trim at 5' end in R2 (see bismark_methylation_extractor documentation), optional argument
@@ -23,4 +22,3 @@ output:
   - read_base_meth_state_cpg: Per read CpG base methylation info, CpG_context_\*.txt.gz  (if key is provided, the out file will be renamed to this name)
   - read_base_meth_state_chg: Per read CpG base methylation info, CHG_context_\*.txt.gz  (if key is provided, the out file will be renamed to this name)
   - read_base_meth_state_chh: Per read CpG base methylation info, CHH_context_\*.txt.gz  (if key is provided, the out file will be renamed to this name)
-blacklisted: Wrapper fails to move output PNG to the right place.
