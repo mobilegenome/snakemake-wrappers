@@ -31,10 +31,10 @@ with TemporaryDirectory() as tempdir:
     input_files = []
     for input_path in snakemake.input:
     
-        input_bam = Path(tempdir, os.path.basename(input_path))
+        input_bam_in_temp = Path(tempdir, os.path.basename(input_path))
         # copy input to tempdir
-        shutil.copy(os.path.basename(input_path), input_bam)
-        input_files.append(str(input_bam))
+        shutil.copy(input_path, input_bam_in_temp)
+        input_files.append(str(input_bam_in_temp))
 
     input_files = " ".join(input_files)
 
