@@ -8,15 +8,15 @@ __license__ = "MIT"
 
 
 import os
+import shutil
+
+
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from snakemake.shell import shell
 
 params_extra = snakemake.params.get("extra", "")
 cmdline_args = ["bismark_methylation_extractor {params_extra}"]
-
-# output dir
-output_dir = snakemake.params.get("output_dir", "")
-if output_dir:
-    cmdline_args.append("-o {output_dir:q}")
 
 # trimming options
 trimming_options = [
@@ -30,41 +30,57 @@ for key in trimming_options:
     if value:
         cmdline_args.append("--{} {}".format(key, value))
 
-# Input
-cmdline_args.append("{snakemake.input}")
 
-# log
-log = snakemake.log_fmt_shell(stdout=True, stderr=True)
-cmdline_args.append("{log}")
+with TemporaryDirectory() as tempdir:
+    tempdir = Path(tempdir)
+    input_files = []
 
-# run
-shell(" ".join(cmdline_args))
+    # copy input files and add to cmdline
+    for input_path in snakemake.input:   
+        input_bam_in_temp = Path(tempdir, os.path.basename(input_path))
+        shutil.copy(input_path, input_bam_in_temp)
+        input_files.append(str(input_bam_in_temp))
+        
+    cmdline_args.append("{input_files}")
+    cmdline_args.append("-o {tempdir} ")  # always use tempdir for initial output
+    # log
+    log = snakemake.log_fmt_shell(stdout=True, stderr=True)
+    cmdline_args.append("{log}")
 
-key2prefix_suffix = [
-    ("mbias_report", ("", ".M-bias.txt")),
-    ("mbias_r1", ("", ".M-bias_R1.png")),
-    ("mbias_r2", ("", ".M-bias_R2.png")),
-    ("splitting_report", ("", "_splitting_report.txt")),
-    ("methylome_CpG_cov", ("", ".bismark.cov.gz")),
-    ("methylome_CpG_mlevel_bedGraph", ("", ".bedGraph.gz")),
-    ("read_base_meth_state_cpg", ("CpG_context_", ".txt.gz")),
-    ("read_base_meth_state_chg", ("CHG_context_", ".txt.gz")),
-    ("read_base_meth_state_chh", ("CHH_context_", ".txt.gz")),
-]
+    shell(" ".join(cmdline_args))
 
-log_append = snakemake.log_fmt_shell(stdout=True, stderr=True, append=True)
-for key, (prefix, suffix) in key2prefix_suffix:
-    exp_path = snakemake.output.get(key, None)
-    if exp_path:
-        if len(snakemake.input) != 1:
-            raise ValueError(
-                "bismark/bismark_methylation_extractor: Error: only one BAM file is"
-                " expected in input, but was <{}>".format(snakemake.input)
-            )
-        bam_file = snakemake.input[0]
-        bam_name = os.path.basename(bam_file)
-        bam_wo_ext = os.path.splitext(bam_name)[0]
+    key2prefix_suffix = [
+        ("mbias_report", ("", ".M-bias.txt")),
+        ("mbias_r1", ("", ".M-bias_R1.png")),
+        ("mbias_r2", ("", ".M-bias_R2.png")),
+        ("splitting_report", ("", "_splitting_report.txt")),
+        ("methylome_CpG_cov", ("", ".bismark.cov.gz")),
+        ("methylome_CpG_mlevel_bedGraph", ("", ".bedGraph.gz"))
+    ]
+    
+    # add additional files is --comprehensive is set
+    if "--comprehensive" in params_extra:
+        key2prefix_suffix.extend([
+            ("read_base_meth_state_cpg", ("CpG_context_", ".txt.gz")),
+            ("read_base_meth_state_chg", ("CHG_context_", ".txt.gz")),
+            ("read_base_meth_state_chh", ("CHH_context_", ".txt.gz"))
+            ])
 
-        actual_path = os.path.join(output_dir, prefix + bam_wo_ext + suffix)
-        if exp_path != actual_path:
-            shell("mv {actual_path:q} {exp_path:q} {log_append}")
+
+    log_append = snakemake.log_fmt_shell(stdout=True, stderr=True, append=True)
+
+    for key, (prefix, suffix) in key2prefix_suffix:
+        exp_path = snakemake.output.get(key, None)
+        if exp_path:
+            if len(snakemake.input) != 1:
+                raise ValueError(
+                    "bismark/bismark_methylation_extractor: Error: only one BAM file is"
+                    " expected in input, but was <{}>".format(snakemake.input)
+                )
+            bam_file = input_files[0]
+            bam_name = os.path.basename(bam_file)
+            bam_wo_ext = os.path.splitext(bam_name)[0]
+
+            actual_path = os.path.join(tempdir, prefix + bam_wo_ext + suffix)
+            if exp_path != actual_path:
+                shell("mv {actual_path:q} {exp_path:q} {log_append}")
