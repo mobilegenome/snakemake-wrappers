@@ -55,7 +55,7 @@ with TemporaryDirectory() as tempdir:
     os.makedirs(genome_indexes_dir)
     shutil.copy(snakemake.input.genome, genome_indexes_dir)
     shutil.copytree(os.path.dirname(snakemake.input.bismark_indexes_dir), genome_indexes_dir, dirs_exist_ok=True)
-    for input_file in snakemake.input.fq_1, snakemake.input.fq_2, snakemake.input.genomic_freq:
+    for input_file in snakemake.input.fq_1, snakemake.input.fq_2:
         shutil.copy(input_file, tempdir)
                
     cmdline_args.append("{genome_indexes_dir}")
