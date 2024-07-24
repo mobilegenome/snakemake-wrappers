@@ -59,9 +59,11 @@ with TemporaryDirectory(dir=scratch_dir) as tempdir:
     genome_indexes_dir = Path(tempdir, "genome/")
     # copy input files into tempdir
     os.makedirs(genome_indexes_dir)
+    print(f"Copying genome {snakemake.input.genome} to {genome_indexes_dir}")
     shutil.copy(snakemake.input.genome, genome_indexes_dir)
     # shutil.copytree(os.path.dirname(snakemake.input.bismark_indexes_dir), genome_indexes_dir, dirs_exist_ok=True)
-    shutil.copytree(snakemake.input.bismark_indexes_dir, genome_indexes_dir, dirs_exist_ok=True)
+    print(f"Copying bismark indexes {snakemake.input.bismark_indexes_dir} to {genome_indexes_dir}")
+    shutil.copytree(snakemake.input.bismark_indexes_dir, genome_indexes_dir, dirs_exist_ok=False)
     for input_file in snakemake.input.fq_1, snakemake.input.fq_2:
         shutil.copy(input_file, tempdir)
                
