@@ -66,7 +66,7 @@ with TemporaryDirectory(dir=scratch_dir) as tempdir:
     
     # copy bismark index
     bismark_idx_dirname = Path(snakemake.input.bismark_indexes_dir).name # normally "Bisulfite_Genome", but let's stay flexile
-    bismark_idx_path = genome_indexes_dir /  indexes_dirname
+    bismark_idx_path = genome_indexes_dir /  bismark_idx_dirname
     print(f"Copying bismark indexes {snakemake.input.bismark_indexes_dir} to {bismark_idx_path}")
     shutil.copytree(snakemake.input.bismark_indexes_dir, bismark_idx_path  , dirs_exist_ok=True)
     
