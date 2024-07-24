@@ -43,11 +43,17 @@ else:
     basename = None
 
 
+# scratch dir
+if snakemake.params.get("scratch_dir", None):
+    scratch_dir = snakemake.params.scratch_dir
+else: 
+    scratch_dir = None
+
 
 # log
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 
-with TemporaryDirectory() as tempdir:
+with TemporaryDirectory(dir=scratch_dir) as tempdir:
     tempdir = Path(tempdir)
     # run
     genome_indexes_dir = Path(tempdir, "genome/")
